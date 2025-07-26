@@ -1,7 +1,7 @@
 from OCR.ocr_module import extract_text_from_image
 
 
-image_path = "IMG_4160.jpg"
+image_path = "images.jpg"
 
 # Get full text
 text = extract_text_from_image(image_path)
