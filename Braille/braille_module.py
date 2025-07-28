@@ -34,6 +34,9 @@ class BrailleConverter:
     }
 
     def __init__(self, text: str):
+        text = text.replace('\n', ' ')
+        text = text.replace('\r', ' ')
+        text = text.replace('\t', ' ')
         self.text = text.lower()
         self.words = self.text.split(' ')
         self.braille = self._convert_to_braille(self.text)
@@ -59,7 +62,8 @@ class BrailleConverter:
                 word_braille.append(self.BRAILLE_MAP[' '])
             word_len = len(word_braille)
 
-            if current_len + word_len > page_size and current_page:
+            space_len = len(current_page) - 1 if current_page else 0
+            if current_len + word_len + space_len > page_size and current_page:
                 pages.append(current_page)
                 current_page = []
                 current_len = 0
