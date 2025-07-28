@@ -11,6 +11,7 @@ yarn-error.log*
 .env
 __pycache__/
 *.pyc
+venv/
 *.pyo
 *.pyd
 .env.local
