@@ -1,8 +1,13 @@
+import sys
 from PIL import Image, ImageFilter
 import pytesseract
 
 # Set tesseract path (Windows only)
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+if sys.platform.startswith("win"):
+    pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+elif sys.platform == "darwin":
+    # Common Homebrew install location for macOS
+    pytesseract.pytesseract.tesseract_cmd = "/opt/homebrew/bin/tesseract"
 
 def preprocess_image(image_path, show=True):
     """
