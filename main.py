@@ -77,7 +77,7 @@ if __name__ == "__main__":
       print(f"'{char}': {braille_to_str(braille_char)}")
 
   # Test pagination
-  page_size = 6
+  page_size = 8
   pages = converter.paginate(page_size)
   print(f"\nPaginated Braille (page size {page_size}):")
   for i, page in enumerate(pages):
