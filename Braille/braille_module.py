@@ -32,6 +32,39 @@ class BrailleConverter:
         ',': (0,1,0,0,0,0),  # comma
         '!': (0,1,1,0,1,0),  # exclamation
     }
+    
+    BRAILLE_REVERSE_MAP = {
+        (1, 0, 0, 0, 0, 0): 'a',
+        (1, 1, 0, 0, 0, 0): 'b',
+        (1, 0, 0, 1, 0, 0): 'c',
+        (1, 0, 0, 1, 1, 0): 'd',
+        (1, 0, 0, 0, 1, 0): 'e',
+        (1, 1, 0, 1, 0, 0): 'f',
+        (1, 1, 0, 1, 1, 0): 'g',
+        (1, 1, 0, 0, 1, 0): 'h',
+        (0, 1, 0, 1, 0, 0): 'i',
+        (0, 1, 0, 1, 1, 0): 'j',
+        (1, 0, 1, 0, 0, 0): 'k',
+        (1, 1, 1, 0, 0, 0): 'l',
+        (1, 0, 1, 1, 0, 0): 'm',
+        (1, 0, 1, 1, 1, 0): 'n',
+        (1, 0, 1, 0, 1, 0): 'o',
+        (1, 1, 1, 1, 0, 0): 'p',
+        (1, 1, 1, 1, 1, 0): 'q',
+        (1, 1, 1, 0, 1, 0): 'r',
+        (0, 1, 1, 1, 0, 0): 's',
+        (0, 1, 1, 1, 1, 0): 't',
+        (1, 0, 1, 0, 0, 1): 'u',
+        (1, 1, 1, 0, 0, 1): 'v',
+        (0, 1, 0, 1, 1, 1): 'w',
+        (1, 0, 1, 1, 0, 1): 'x',
+        (1, 0, 1, 1, 1, 1): 'y',
+        (1, 0, 1, 0, 1, 1): 'z',
+        (0, 0, 0, 0, 0, 0): '_', # Map space to _ for debugging clarity
+        (0, 1, 0, 0, 1, 1): '.',
+        (0, 1, 0, 0, 0, 0): ',',
+        (0, 1, 1, 0, 1, 0): '!',
+    }
 
     def __init__(self, text: str):
         text = text.replace('\n', ' ')
@@ -49,7 +82,14 @@ class BrailleConverter:
             braille_list.append(braille_char)
         return braille_list
 
+    def decodeBrailleCell(self, brailleCell):
+        # Convert braille cell to character
+        return self.BRAILLE_REVERSE_MAP.get(tuple(brailleCell), '?')  # Use '?' for unknown patterns
+
     def paginate(self, page_size: int):
+      return self.paginateSplit(page_size)
+
+    def paginateNoSplit(self, page_size: int):
         # Paginate without splitting words
         pages = []
         current_page = []
@@ -74,6 +114,39 @@ class BrailleConverter:
         if current_page:
             pages.append(current_page)
         return pages
+
+    def paginateSplit(self, page_size: int):
+      # Paginate with character-level splitting and spaces between words only
+      pages = []
+      current_page = []
+      current_len = 0
+
+      for i, word in enumerate(self.words):
+          space_braille = self.BRAILLE_MAP.get(' ', (0,0,0,0,0,0))
+          for c in word:
+              char_braille = self.BRAILLE_MAP.get(c, (0,0,0,0,0,0))
+              if current_len + 1 > page_size:
+                  pages.append(current_page)
+                  current_page = []
+                  current_len = 0
+              current_page.append(char_braille)
+              current_len += 1
+
+          # Add space after word, unless it's the last word
+          if i != len(self.words) - 1:
+              if current_len + 1 > page_size:
+                  pages.append(current_page)
+                  current_page = []
+                  current_len = 0
+              current_page.append(space_braille)
+              current_len += 1
+
+      if current_page:
+        while current_len + 1 <= page_size:
+          current_page.append(space_braille)
+          current_len +=1
+        pages.append(current_page)
+      return pages
 
     def get_braille(self):
         return self.braille
