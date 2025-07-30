@@ -68,7 +68,8 @@ if __name__ == "__main__":
   print("Words List:\n", word_list)
 
   # Test BrailleConverter
-  converter = BrailleConverter(text)
+  converter = BrailleConverter()
+  converter(text)
   braille = converter.get_braille()
 
 

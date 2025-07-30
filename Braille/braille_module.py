@@ -65,8 +65,12 @@ class BrailleConverter:
         (0, 1, 0, 0, 0, 0): ',',
         (0, 1, 1, 0, 1, 0): '!',
     }
+    def __init__(self):
+        self.text = ""
+        self.words = ""
+        self.braille = ""
 
-    def __init__(self, text: str):
+    def __call__(self, text: str):
         text = text.replace('\n', ' ')
         text = text.replace('\r', ' ')
         text = text.replace('\t', ' ')
